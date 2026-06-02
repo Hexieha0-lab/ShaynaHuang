@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS 变量用于可微调主题 */
+:root {
+  --bg: #EEF1FF; /* 主背景色：柔和浅雪青/淡紫 */
+  --card: #FFFFFF; /* 卡片纯白 */
+  --text: #111827; /* 基础文本深灰 */
+  --accent: #6C63FF; /* 强调色 */
+  --accent-dark: #564EE6;
+  --accent-light: #8B84FF;
+}
+
+/* 全局背景与排版 */
+html, body, #__next {
+  height: 100%;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  line-height: 1.75; /* 行高更宽松 */
+  font-weight: 400; /* 默认 regular */
+}
+
+.display-script {
+  font-family: 'Petit Formal Script', cursive;
+}
+
+/* 调整常见粗细：粗体->regular(400), 细体->extralight(200) */
+strong, b, h1, h2, h3, h4, h5, h6 {
+  font-weight: 250; /* regular 替代粗体 */
+}
+
+.text-thin, .font-thin, .extralight {
+  font-weight: 200; /* extralight */
+}
+
+/* 背景抽象雪花/光晕（极度稀疏、半透明） */
+.bg-snow-texture {
+  position: relative;
+}
+.bg-snow-texture::before,
+.bg-snow-texture::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.bg-snow-texture::before {
+  background:
+    radial-gradient(120px 120px at 10% 20%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%),
+    radial-gradient(160px 160px at 85% 15%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 65%),
+    radial-gradient(100px 100px at 80% 85%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 60%),
+    linear-gradient(180deg, rgba(108,99,255,0.06), rgba(238,241,255,0.0) 45%, rgba(108,99,255,0.06));
+}
+.bg-snow-texture::after {
+  background-image:
+    repeating-linear-gradient(120deg, rgba(255,255,255,0.12) 0 2px, transparent 2px 16px);
+  mask-image: radial-gradient(400px 400px at 70% 40%, black 0%, transparent 70%);
+  opacity: .22;
+}
+
+/* 柔和背景动效：淡淡的上下漂移 */
+.bg-snow-texture {
+  animation: bgFloat 18s ease-in-out infinite;
+}
+@keyframes bgFloat {
+  0%, 100% { background-position: 0 0; }
+  50% { background-position: 0 8px; }
+}
+
+/* 首页顶部下雪效果 */
+.snowfall-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 35vh;
+  z-index: 10;
+}
+.snowflake {
+  position: absolute;
+  top: -10px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.1));
+  box-shadow: 0 0 12px rgba(108,99,255,0.25);
+  animation-name: snowfallFloat;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes snowfallFloat {
+  0% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(50vh) translateX(6px); }
+  100% { transform: translateY(100vh) translateX(-6px); }
+}
+
+/* 链接与交互 */
+a {
+  color: var(--accent);
+  transition: color 200ms ease, text-decoration-color 200ms ease;
+  text-decoration-color: transparent;
+}
+a:hover {
+  color: var(--accent-dark);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* 放松排版：标题与段落间距 */
+h1, h2, h3, h4, h5, h6 { margin-bottom: 1rem; }
+p { margin-bottom: 1.5rem; }
+section { margin-bottom: 2rem; }
+
+/* 全局图片响应式缩放（HTML img 标签兜底） */
+img { max-width: 100%; height: auto; }
+
+/* 自定义雪花鼠标指针 */
+body, a, button {
+  cursor: url('/images/Snowflake.png') 8 8, auto;
+}
+
+/* 鼠标元素悬停时略显发光（通过滤镜阴影模拟） */
+.cursor-glow:hover {
+  filter: drop-shadow(0 2px 4px rgba(108, 99, 255, 0.35));
+}
+
+/* 通用卡片 */
+.card {
+  background: var(--card);
+  border-radius: 20px; /* 大圆角 */
+  box-shadow: 0 8px 24px rgba(108, 99, 255, 0.08), 0 2px 8px rgba(17, 24, 39, 0.06);
+  padding: 1.25rem; /* 全站卡片内容更宽松 */
+}
+
+/* 细分割线/冰晶感几何线条 */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(86, 78, 230, .35), rgba(255,255,255,0));
+}
+
+/* 渐入动画基调 */
+.fade-in-up {
+  animation: fadeInUp 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(8px) }
+  100% { opacity: 1; transform: translateY(0) }
+}
