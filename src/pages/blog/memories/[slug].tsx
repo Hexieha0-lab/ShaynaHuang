@@ -1,8 +1,7 @@
-import { useRouter } from 'next/router'
 import Link from 'next/link'
+import type { GetStaticPaths, GetStaticProps } from 'next'
 import Layout from '../../../components/common/Layout'
 
-// 简单的占位数据。实际可从后端或独立数据文件加载
 const MEMORY_IMAGES: Record<string, { title: string; images: string[] }> = {
   'yunnan': { title: 'FriendTRIP in Yunnan', images: [
     '/images/memories/yunnan/1.jpg',
@@ -91,11 +90,32 @@ const MEMORY_IMAGES: Record<string, { title: string; images: string[] }> = {
   ] },
 }
 
-export default function MemoryDetail() {
-  const router = useRouter()
-  const { slug } = router.query as { slug?: string }
-  const data = slug ? MEMORY_IMAGES[slug] : undefined
+type MemoryDetailProps = {
+  data: { title: string; images: string[] }
+}
 
+export const getStaticPaths: GetStaticPaths = async () => {
+  const slugs = Object.keys(MEMORY_IMAGES)
+  return {
+    paths: slugs.map((slug) => ({ params: { slug } })),
+    fallback: false,
+  }
+}
+
+export const getStaticProps: GetStaticProps<MemoryDetailProps> = async ({ params }) => {
+  const slug = params?.slug as string
+  const data = MEMORY_IMAGES[slug]
+
+  if (!data) {
+    return { notFound: true }
+  }
+
+  return {
+    props: { data },
+  }
+}
+
+export default function MemoryDetail({ data }: MemoryDetailProps) {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto px-4 py-10 md:py-14">
@@ -105,13 +125,12 @@ export default function MemoryDetail() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </Link>
-          <h1 className="text-3xl md:text-4xl font-bold text-accent display-script">{data?.title ?? 'Memories'}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-accent display-script">{data.title}</h1>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {(data?.images ?? Array.from({ length: 8 }).map((_, i) => `/images/photo.jpg`)).map((src, idx) => (
+          {data.images.map((src, idx) => (
             <div key={idx} className="rounded-2xl overflow-hidden bg-white shadow-soft aspect-square">
-              {/* 可替换为 next/image */}
               <img src={src} alt={`memory-${idx}`} className="w-full h-full object-cover" />
             </div>
           ))}
@@ -120,5 +139,3 @@ export default function MemoryDetail() {
     </Layout>
   )
 }
-
-
